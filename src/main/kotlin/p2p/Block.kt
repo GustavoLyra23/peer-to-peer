@@ -1,4 +1,4 @@
-package org.gustavolyra
+package org.gustavolyra.p2p
 
 import java.time.Instant
 

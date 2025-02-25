@@ -1,6 +1,4 @@
-package org.gustavolyra
-
-import kotlinx.coroutines.internal.synchronized
+package org.gustavolyra.p2p
 
 class BlockChain {
 
@@ -20,7 +18,7 @@ class BlockChain {
     }
 
     @Synchronized
-    private fun mine(block: Block): Block {
+    fun mine(block: Block): Block {
         printMiningMsgOnConsole()
         var minedBlock = block.copy()
         while (!isMined(minedBlock)) {

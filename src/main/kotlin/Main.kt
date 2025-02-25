@@ -1,4 +1,4 @@
-package org.gustavolyra
+package org.gustavolyra.p2p
 
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -6,22 +6,21 @@ import java.security.MessageDigest
 
 fun main() = runBlocking {
     //mocking the peers...
-    val bootstrapPeers = mutableListOf(
-        Peer("localhost", 8080),
-        Peer("localhost", 8081)
-    )
-    runServer(8080, bootstrapPeers)
+    val cachedPeer = createPeer()
+    val peerList = mutableListOf<Peer>(cachedPeer, createPeer("localhost", 8081), createPeer("localhost", 8080))
+    val serverJob = runServer(8080, peerList)
     delay(2000)
-    val newPeers = getPeers(Peer("localhost", 8080))
-    println("Peers obtidos:  $newPeers")
+    val newPeers = getPeers(peerList[2])
+    println("Peer obtained ->  $newPeers")
 
+    //BlockChain...
     val genesisBlock = Block(previousHash = "0", data = "Genesis Block")
-    val secondBlock = Block(previousHash = genesisBlock.hash, data = "Second Block")
-    val thirdBlock = Block(previousHash = secondBlock.hash, data = "Third Block")
-    println(genesisBlock)
-    println(secondBlock)
-    println(thirdBlock)
+    val blockChain = BlockChain()
+    val minedBlock = blockChain.mine(genesisBlock)
+    blockChain.add(minedBlock)
 
+
+    serverJob.join()
 }
 
 fun String.hash(algorithm: String = "SHA=256"): String {
