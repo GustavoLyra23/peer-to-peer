@@ -23,7 +23,7 @@ fun main() = runBlocking {
     serverJob.join()
 }
 
-fun String.hash(algorithm: String = "SHA=256"): String {
+fun String.hash(algorithm: String = "SHA-256"): String {
     val msgDigest = MessageDigest.getInstance(algorithm)
     msgDigest.update(this.toByteArray())
     return String.format("%064x", java.math.BigInteger(1, msgDigest.digest()))

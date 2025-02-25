@@ -16,7 +16,6 @@ suspend fun getPeers(peer: Peer): List<Peer> = withContext(Dispatchers.IO) {
         val socket = Socket(peer.host, peer.port)
         val writer = PrintWriter(socket.getOutputStream(), true)
         val reader = BufferedReader(InputStreamReader(socket.getInputStream()))
-
         writer.println("GET_PEERS")
         val response = reader.readLine()
         val peers = response?.split(",")?.mapNotNull {
@@ -36,6 +35,7 @@ suspend fun getPeers(peer: Peer): List<Peer> = withContext(Dispatchers.IO) {
     }
 }
 
+
 fun runServer(port: Int, knownPeers: MutableList<Peer>): Job {
     return GlobalScope.launch(Dispatchers.IO) {
         try {
@@ -51,6 +51,10 @@ fun runServer(port: Int, knownPeers: MutableList<Peer>): Job {
                         if (request == "GET_PEERS") {
                             val response = knownPeers.joinToString(",") { "${it.host}:${it.port}" }
                             writer.println(response)
+                        } else if (request == "MINE_BLOCK") {
+                            var peer = knownPeers[Random.nextInt(0, knownPeers.size)]
+
+
                         }
                     } catch (e: Exception) {
                         println("Error handling client: ${e.message}")
